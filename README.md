@@ -21,11 +21,12 @@
 
 | 文件名 | 下载地址 | 格式 | 说明
 | --- | --- | --- | ---
-| `private.mrs`  | [private] | ipcidr/mrs | 私有IP
-| `cnip.mrs`     | [cnip]    | ipcidr/mrs | 中国IPv4
-| `direct.mrs`   | [direct]  | domain/mrs | 直连域名
-| `gfw.mrs`      | [gfw]     | domain/mrs | 被墙域名
-| `applecn.mrs`  | [applecn] | domain/mrs | apple 直连域名
+| `private.mrs`  | [private]      | `ipcidr/mrs` | 私有IP
+| `cnip.mrs`     | [cnip]         | `ipcidr/mrs` | 中国IPv4
+| `china-domain` | [china-domain] | `domain/mrs` | 中国域名
+| `direct.mrs`   | [direct]       | `domain/mrs` | 直连域名
+| `gfw.mrs`      | [gfw]          | `domain/mrs` | 被墙域名
+| `applecn.mrs`  | [applecn]      | `domain/mrs` | apple 直连域名
 
 ---
 
@@ -38,6 +39,7 @@
 [geoip.mmdb]: https://github.com/qRuWGQ/rules/raw/refs/heads/main/rules/geoip/geoip.mmdb
 
 [cnip]: https://github.com/qRuWGQ/rules/raw/refs/heads/main/rules/mihomo/cnip.mrs
+[china-domain]: https://github.com/qRuWGQ/rules/raw/refs/heads/main/rules/mihomo/china-domain.mrs
 [direct]: https://github.com/qRuWGQ/rules/raw/refs/heads/main/rules/mihomo/direct.mrs
 [gfw]: https://github.com/qRuWGQ/rules/raw/refs/heads/main/rules/mihomo/gfw.mrs
 [private]: https://github.com/qRuWGQ/rules/raw/refs/heads/main/rules/mihomo/private.mrs
