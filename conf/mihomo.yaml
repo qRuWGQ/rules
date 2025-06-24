@@ -4,6 +4,12 @@ direct:
   format: "yaml"
   url: "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/direct.txt"
 
+# 国内域名合集
+china-domain:
+  behavior: "domain"
+  format: "yaml"
+  url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/ChinaMaxNoIP/ChinaMaxNoIP_Domain.yaml
+
 # 被墙域名
 gfw:
   behavior: "domain"
