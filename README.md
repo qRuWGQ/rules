@@ -21,11 +21,11 @@
 
 | 文件名 | 下载地址 | 格式 | 说明
 | --- | --- | --- | ---
-| `private.mrs`  | [private] | mrs | 私有IP
-| `cnip.mrs`     | [cnip]    | mrs | 中国IPv4
-| `direct.mrs`   | [direct]  | mrs | 直连域名
-| `gfw.mrs`      | [gfw]     | mrs | 被墙域名
-| `applecn.mrs`  | [applecn] | mrs | apple 直连域名
+| `private.mrs`  | [private] | ipcidr/mrs | 私有IP
+| `cnip.mrs`     | [cnip]    | ipcidr/mrs | 中国IPv4
+| `direct.mrs`   | [direct]  | domain/mrs | 直连域名
+| `gfw.mrs`      | [gfw]     | domain/mrs | 被墙域名
+| `applecn.mrs`  | [applecn] | domain/mrs | apple 直连域名
 
 ---
 
