@@ -1,0 +1,26 @@
+input:
+  - type: text
+    action: add
+    args:
+      name: cnv4
+      uri: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/ChinaIPs/ChinaIPs_IP_No_IPv6.txt
+
+  - type: text
+    action: add
+    args:
+      name: cnv6
+      uri: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/ChinaIPs/ChinaIPs_IP.txt
+      onlyIPType: ipv6
+
+output:
+  - type: v2rayGeoIPDat
+    action: output
+    args:
+      outputName: geoip.dat
+      outputDir: ./
+
+  - type: maxmindMMDB
+    action: output
+    args:
+      outputName: geoip.mmdb
+      outputDir: ./

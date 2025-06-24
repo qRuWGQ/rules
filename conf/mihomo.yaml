@@ -1,0 +1,29 @@
+# 直连域名
+direct:
+  behavior: "domain"
+  format: "yaml"
+  url: "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/direct.txt"
+
+# 被墙域名
+gfw:
+  behavior: "domain"
+  format: "yaml"
+  url: "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/gfw.txt"
+
+# 中国IP，不包含IPv6
+cnip:
+  behavior: "ipcidr"
+  format: "yaml"
+  url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/ChinaIPs/ChinaIPs_IP_No_IPv6.yaml"
+
+# 私有IP
+private:
+  behavior: "ipcidr"
+  format: "yaml"
+  url: "https://raw.githubusercontent.com/Loyalsoldier/geoip/refs/heads/release/clash/ipcidr/private.txt"
+
+# apple 直连域名
+applecn:
+  behavior: "domain"
+  format: "yaml"
+  url: "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/refs/heads/release/apple.txt"

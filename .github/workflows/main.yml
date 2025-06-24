@@ -1,0 +1,134 @@
+name: Generation Rules
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 */12 * * *
+  push:
+    paths:
+      - "./conf/**.yaml"
+
+env:
+  TZ: Asia/Shanghai
+  CONF_DIR: ./conf
+  RULES_OUTPUT_DIR: ./rules
+  MIHOMO_VERSION: 1.19.10
+  MIHOMO_CONF_NAME: mihomo
+  GEOIP_CONF_NAME: geoip
+
+jobs:
+  Mihomo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mikefarah/yq@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y wget gzip
+          sudo timedatectl set-timezone "$TZ"
+      - name: Download Mihomo
+        run: |
+          wget -c -O mihomo-linux-amd64-v${MIHOMO_VERSION}.gz https://github.com/MetaCubeX/mihomo/releases/download/v${MIHOMO_VERSION}/mihomo-linux-amd64-v${MIHOMO_VERSION}.gz
+          gzip -df mihomo-linux-amd64-v${MIHOMO_VERSION}.gz
+          mv mihomo-linux-amd64-v${MIHOMO_VERSION} mihomo
+          chmod +x mihomo
+
+      - name: Convert Rules
+        run: |
+          mkdir -p ./tmp
+          rm -fr ${RULES_OUTPUT_DIR}/${MIHOMO_CONF_NAME}
+          mkdir -p ${RULES_OUTPUT_DIR}/${MIHOMO_CONF_NAME}
+
+          MIHOMO_CONF_FILE=${CONF_DIR}/${MIHOMO_CONF_NAME}.yaml
+          keys=$(yq e 'keys | .[]' ${MIHOMO_CONF_FILE})
+
+          for key in $keys; do
+
+            # 获取URL、format和behavior
+            url=$(yq e ".${key}.url" ${MIHOMO_CONF_FILE})
+            format=$(yq e ".${key}.format" ${MIHOMO_CONF_FILE})
+            behavior=$(yq e ".${key}.behavior" ${MIHOMO_CONF_FILE})
+
+            filename="${key}.${format}"
+
+            wget -c -O "./tmp/${filename}" "${url}"
+
+            if [ $? -eq 0 ]; then
+              ./mihomo convert-ruleset ${behavior} ${format} "./tmp/${filename}" "${RULES_OUTPUT_DIR}/${MIHOMO_CONF_NAME}/${key}.mrs"
+            fi
+
+          done
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.MIHOMO_CONF_NAME }}
+          path: ${{ env.RULES_OUTPUT_DIR }}/${{ env.MIHOMO_CONF_NAME }}
+          overwrite: true
+
+      - name: Clean up
+        run: |
+          rm -rf mihomo
+          rm -fr ./tmp
+
+  GeoIP:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mikefarah/yq@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+
+      - name: Install geoip cli
+        run: |
+          go install -v github.com/Loyalsoldier/geoip@latest
+
+      - name: Format conversion
+        run: |
+          GEOIP_CONF_FILE=${CONF_DIR}/${GEOIP_CONF_NAME}
+
+          yq -o json ${GEOIP_CONF_FILE}.yaml > ${GEOIP_CONF_FILE}.json
+
+          rm -fr ${RULES_OUTPUT_DIR}/${GEOIP_CONF_NAME}
+          mkdir -p ${RULES_OUTPUT_DIR}/${GEOIP_CONF_NAME}
+          cd ${RULES_OUTPUT_DIR}/${GEOIP_CONF_NAME}
+
+          geoip convert -c ${{ github.workspace }}/${GEOIP_CONF_FILE}.json
+
+          cd -
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.GEOIP_CONF_NAME }}
+          path: ${{ env.RULES_OUTPUT_DIR }}/${{env.GEOIP_CONF_NAME}}
+          overwrite: true
+
+      - name: Clean up
+        run: |
+          rm -fr ${GEOIP_CONF_FILE}.json
+
+  Commit:
+    needs: [Mihomo, GeoIP]
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clean up
+        run: |
+          rm -fr ${{ env.RULES_OUTPUT_DIR }}
+          mkdir -p ${{ env.RULES_OUTPUT_DIR }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: ${{ env.RULES_OUTPUT_DIR }}
+
+      - uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+          commit_message: auto update
