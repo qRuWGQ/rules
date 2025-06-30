@@ -11,11 +11,12 @@ on:
 
 env:
   TZ: Asia/Shanghai
-  CONF_DIR: ./conf
-  RULES_OUTPUT_DIR: ./rules
+  CONF_DIR: ${{ github.workspace }}/conf
+  RULES_OUTPUT_DIR: ${{ github.workspace }}/rules
   MIHOMO_VERSION: 1.19.10
   MIHOMO_CONF_NAME: mihomo
   GEOIP_CONF_NAME: geoip
+  GEOSITE_CONF_NAME: geosite
 
 jobs:
   Mihomo:
@@ -47,7 +48,6 @@ jobs:
           keys=$(yq e 'keys | .[]' ${MIHOMO_CONF_FILE})
 
           for key in $keys; do
-
             # 获取URL、format和behavior
             url=$(yq e ".${key}.url" ${MIHOMO_CONF_FILE})
             format=$(yq e ".${key}.format" ${MIHOMO_CONF_FILE})
@@ -60,7 +60,6 @@ jobs:
             if [ $? -eq 0 ]; then
               ./mihomo convert-ruleset ${behavior} ${format} "./tmp/${filename}" "${RULES_OUTPUT_DIR}/${MIHOMO_CONF_NAME}/${key}.mrs"
             fi
-
           done
 
       - uses: actions/upload-artifact@v4
@@ -98,9 +97,7 @@ jobs:
           mkdir -p ${RULES_OUTPUT_DIR}/${GEOIP_CONF_NAME}
           cd ${RULES_OUTPUT_DIR}/${GEOIP_CONF_NAME}
 
-          geoip convert -c ${{ github.workspace }}/${GEOIP_CONF_FILE}.json
-
-          cd -
+          geoip convert -c ${GEOIP_CONF_FILE}.json
 
       - uses: actions/upload-artifact@v4
         with:
@@ -112,8 +109,51 @@ jobs:
         run: |
           rm -fr ${GEOIP_CONF_FILE}.json
 
+  GeoSite:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mikefarah/yq@v4
+      - uses: actions/setup-go@v5
+
+      - name: Get geoiste repository
+        run: |
+          git clone https://github.com/v2fly/domain-list-community.git
+
+      - name: Convert Rules
+        run: |
+          GEOSITE_CONF_FILE=${CONF_DIR}/${GEOSITE_CONF_NAME}.yaml
+          keys=$(yq e 'keys | .[]' ${GEOSITE_CONF_FILE})
+
+          rm -fr ${RULES_OUTPUT_DIR}/${GEOSITE_CONF_NAME}
+          mkdir -p ${RULES_OUTPUT_DIR}/${GEOSITE_CONF_NAME}
+
+          cd ./domain-list-community
+          mkdir -p ./tmp
+          rm -fr ./data/*
+          for key in $keys; do
+            url=$(yq e ".${key}.url" ${GEOSITE_CONF_FILE})
+            wget -c -O "./tmp/${key}.yaml" "${url}"
+            yq '.payload.[]' ./tmp/${key}.yaml > ./data/${key}
+            sed -i -e 's/^[^+.*]/full:&/' -e 's/^+\.//' ./data/${key}
+          done
+
+          go mod download
+          go run ./ -outputname=${GEOSITE_CONF_NAME}.dat -outputdir=${RULES_OUTPUT_DIR}/${GEOSITE_CONF_NAME}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.GEOSITE_CONF_NAME }}
+          path: ${{ env.RULES_OUTPUT_DIR }}/${{env.GEOSITE_CONF_NAME}}
+          overwrite: true
+
+      - name: Clean up
+        run: |
+          rm -fr ./domain-list-community
+
   Commit:
-    needs: [Mihomo, GeoIP]
+    needs: [Mihomo, GeoIP, GeoSite]
     runs-on: ubuntu-latest
 
     permissions:

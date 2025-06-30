@@ -1,35 +1,41 @@
 # 直连域名
 direct:
-  behavior: "domain"
-  format: "yaml"
-  url: "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/direct.txt"
+  behavior: domain
+  format: yaml
+  url: https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/direct.txt
 
-# 国内域名合集
-china-domain:
-  behavior: "domain"
-  format: "yaml"
+# 中国域名
+china_domain:
+  behavior: domain
+  format: yaml
   url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/ChinaMaxNoIP/ChinaMaxNoIP_Domain.yaml
+
+# 中国IP，不包含IPv6
+china_ip:
+  behavior: ipcidr
+  format: yaml
+  url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/ChinaIPs/ChinaIPs_IP_No_IPv6.yaml
 
 # 被墙域名
 gfw:
-  behavior: "domain"
-  format: "yaml"
-  url: "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/gfw.txt"
-
-# 中国IP，不包含IPv6
-cnip:
-  behavior: "ipcidr"
-  format: "yaml"
-  url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/ChinaIPs/ChinaIPs_IP_No_IPv6.yaml"
+  behavior: domain
+  format: yaml
+  url: https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/gfw.txt
 
 # 私有IP
-private:
-  behavior: "ipcidr"
-  format: "yaml"
-  url: "https://raw.githubusercontent.com/Loyalsoldier/geoip/refs/heads/release/clash/ipcidr/private.txt"
+private_ip:
+  behavior: ipcidr
+  format: yaml
+  url: https://raw.githubusercontent.com/Loyalsoldier/geoip/refs/heads/release/clash/ipcidr/private.txt
 
-# apple 直连域名
-applecn:
-  behavior: "domain"
-  format: "yaml"
-  url: "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/refs/heads/release/apple.txt"
+# 私有域名
+private_domain:
+  behavior: domain
+  format: yaml
+  url: https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/private.txt
+
+# 广告域名
+adblock:
+  behavior: domain
+  format: yaml
+  url: https://raw.githubusercontent.com/217heidai/adblockfilters/main/rules/adblockmihomo.yaml
