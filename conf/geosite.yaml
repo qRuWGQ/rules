@@ -1,6 +1,6 @@
 # 中国域名
 cn:
-  url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/ChinaMaxNoIP/ChinaMaxNoIP_Domain.yaml
+  url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/China/China_Domain.yaml
 
 # 被墙域名
 gfw:
@@ -13,3 +13,7 @@ adblock:
 # 私有域名
 private:
   url: https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/private.txt
+
+# 直连域名
+direct:
+  url: https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/direct.txt
