@@ -136,7 +136,7 @@ jobs:
             url=$(yq e ".${key}.url" ${GEOSITE_CONF_FILE})
             wget -c -O "./tmp/${key}.yaml" "${url}"
             yq '.payload.[]' ./tmp/${key}.yaml > ./data/${key}
-            sed -i -e 's/^[^+.*]/full:&/' -e 's/^+\.//' ./data/${key}
+            perl -i -ne 'next if /_/; s/^[^+.*]/full:$&/; s/^\+\.//; print' ./data/${key}
           done
 
           go mod download
