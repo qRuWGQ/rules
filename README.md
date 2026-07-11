@@ -35,6 +35,20 @@
 
 ### Mihomo 规则集
 
+每个规则集可在 `conf/mihomo.yaml` 中使用可选的 `add` 和 `del` 数组调整上游规则。
+`del` 会精确删除匹配项，随后追加 `add` 中尚不存在的规则；最终结果会保持顺序并去重。
+
+```yaml
+adblock:
+  behavior: domain
+  format: yaml
+  url: https://example.com/rules.yaml
+  del:
+    - unwanted.example
+  add:
+    - blocked.example
+```
+
 | 文件名 | 下载地址 | 格式 | 说明
 | --- | --- | --- | ---
 | `private_ip.mrs`     | [private_ip]     | `ipcidr/mrs` | 私有IP

@@ -8,6 +8,8 @@ on:
       - "main"
     paths:
       - "conf/*.yaml"
+      - "scripts/apply-rule-overrides.sh"
+      - ".github/workflows/main.yml"
 
 env:
   TZ: Asia/Shanghai
@@ -56,10 +58,8 @@ jobs:
             filename="${key}.${format}"
 
             wget -c -O "./tmp/${filename}" "${url}"
-
-            if [ $? -eq 0 ]; then
-              ./mihomo convert-ruleset ${behavior} ${format} "./tmp/${filename}" "${RULES_OUTPUT_DIR}/${MIHOMO_CONF_NAME}/${key}.mrs"
-            fi
+            ./scripts/apply-rule-overrides.sh "${MIHOMO_CONF_FILE}" "${key}" "./tmp/${filename}"
+            ./mihomo convert-ruleset "${behavior}" "${format}" "./tmp/${filename}" "${RULES_OUTPUT_DIR}/${MIHOMO_CONF_NAME}/${key}.mrs"
           done
 
       - uses: actions/upload-artifact@v4
